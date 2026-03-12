@@ -13,6 +13,7 @@ endif()
 
 add_library(matrix_core STATIC
         src/core/matrix.cpp
+        src/core/linalg.cpp
 )
 target_include_directories(matrix_core PUBLIC src)
 
