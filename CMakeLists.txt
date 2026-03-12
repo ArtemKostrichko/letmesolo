@@ -24,6 +24,7 @@ target_include_directories(matrix_io PUBLIC src)
 
 add_library(matrix_util STATIC
         src/util/placeholder.cpp
+        src/util/value_printer.cpp
 )
 target_include_directories(matrix_util PUBLIC src)
 
