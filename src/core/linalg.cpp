@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <optional>
 
 namespace core {
 namespace {
@@ -13,7 +12,6 @@ namespace {
 int findPivotRow(const Matrix& matrix, const int startRow, const int col) {
     int pivot = startRow;
     double best = std::abs(matrix.at(startRow, col));
-
     for (int r = startRow + 1; r < matrix.rows(); ++r) {
         const double candidate = std::abs(matrix.at(r, col));
         if (candidate > best) {
@@ -21,7 +19,6 @@ int findPivotRow(const Matrix& matrix, const int startRow, const int col) {
             pivot = r;
         }
     }
-
     return pivot;
 }
 
@@ -29,7 +26,6 @@ void swapRows(Matrix& matrix, const int r1, const int r2) {
     if (r1 == r2) {
         return;
     }
-
     for (int c = 0; c < matrix.cols(); ++c) {
         std::swap(matrix.at(r1, c), matrix.at(r2, c));
     }
@@ -51,7 +47,6 @@ Matrix LinAlgService::rref(Matrix matrix) {
 
     for (int col = 0; col < matrix.cols() && pivotRow < matrix.rows(); ++col) {
         const int bestRow = findPivotRow(matrix, pivotRow, col);
-
         if (isNearlyZero(matrix.at(bestRow, col))) {
             continue;
         }
@@ -61,6 +56,9 @@ Matrix LinAlgService::rref(Matrix matrix) {
         const double pivot = matrix.at(pivotRow, col);
         for (int c = 0; c < matrix.cols(); ++c) {
             matrix.at(pivotRow, c) /= pivot;
+            if (isNearlyZero(matrix.at(pivotRow, c))) {
+                matrix.at(pivotRow, c) = 0.0;
+            }
         }
 
         for (int r = 0; r < matrix.rows(); ++r) {
@@ -96,7 +94,6 @@ int LinAlgService::rank(Matrix matrix) {
             ++result;
         }
     }
-
     return result;
 }
 
@@ -111,7 +108,6 @@ double LinAlgService::det(Matrix matrix) {
 
     for (int col = 0; col < n; ++col) {
         const int pivotRow = findPivotRow(matrix, col, col);
-
         if (isNearlyZero(matrix.at(pivotRow, col))) {
             return 0.0;
         }
@@ -126,13 +122,21 @@ double LinAlgService::det(Matrix matrix) {
 
         for (int r = col + 1; r < n; ++r) {
             const double factor = matrix.at(r, col) / pivot;
+            if (isNearlyZero(factor)) {
+                continue;
+            }
+
             for (int c = col; c < n; ++c) {
                 matrix.at(r, c) -= factor * matrix.at(col, c);
+                if (isNearlyZero(matrix.at(r, c))) {
+                    matrix.at(r, c) = 0.0;
+                }
             }
         }
     }
 
-    return determinant * sign;
+    const double result = determinant * sign;
+    return isNearlyZero(result) ? 0.0 : result;
 }
 
 std::optional<Matrix> LinAlgService::inverse(const Matrix& matrix) {
@@ -167,6 +171,9 @@ std::optional<Matrix> LinAlgService::inverse(const Matrix& matrix) {
     for (int r = 0; r < n; ++r) {
         for (int c = 0; c < n; ++c) {
             inverseMatrix.at(r, c) = augmented.at(r, n + c);
+            if (isNearlyZero(inverseMatrix.at(r, c))) {
+                inverseMatrix.at(r, c) = 0.0;
+            }
         }
     }
 
