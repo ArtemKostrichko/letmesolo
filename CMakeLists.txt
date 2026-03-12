@@ -18,6 +18,7 @@ target_include_directories(matrix_core PUBLIC src)
 
 add_library(matrix_io STATIC
         src/io/matrix_input.cpp
+        src/io/matrix_print.cpp
 )
 target_include_directories(matrix_io PUBLIC src)
 
@@ -28,6 +29,7 @@ target_include_directories(matrix_util PUBLIC src)
 
 add_library(matrix_report STATIC
         src/report/placeholder.cpp
+        src/report/info_step.cpp
 )
 target_include_directories(matrix_report PUBLIC src)
 
