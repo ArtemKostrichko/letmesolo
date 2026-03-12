@@ -1,17 +1,17 @@
 #pragma once
 
-#include <optional>
-
 #include "core/matrix.h"
+
+#include <optional>
 
 namespace core {
 
     class LinAlgService {
     public:
-        Matrix rref(const Matrix& matrix) const;
-        int rank(const Matrix& matrix) const;
-        double det(const Matrix& matrix) const;
-        std::optional<Matrix> inverse(const Matrix& matrix) const;
+        [[nodiscard]] static Matrix rref(Matrix matrix);
+        [[nodiscard]] static int rank(Matrix matrix);
+        [[nodiscard]] static double det(Matrix matrix);
+        [[nodiscard]] static std::optional<Matrix> inverse(const Matrix& matrix);
     };
 
 } // namespace core

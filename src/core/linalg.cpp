@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 namespace core {
 namespace {
@@ -50,6 +51,7 @@ Matrix LinAlgService::rref(Matrix matrix) {
 
     for (int col = 0; col < matrix.cols() && pivotRow < matrix.rows(); ++col) {
         const int bestRow = findPivotRow(matrix, pivotRow, col);
+
         if (isNearlyZero(matrix.at(bestRow, col))) {
             continue;
         }
@@ -103,9 +105,9 @@ double LinAlgService::det(Matrix matrix) {
         throw DimensionError("determinant is defined only for square matrices");
     }
 
-    const int n = matrix.rows();
     double sign = 1.0;
     double determinant = 1.0;
+    const int n = matrix.rows();
 
     for (int col = 0; col < n; ++col) {
         const int pivotRow = findPivotRow(matrix, col, col);
@@ -124,20 +126,51 @@ double LinAlgService::det(Matrix matrix) {
 
         for (int r = col + 1; r < n; ++r) {
             const double factor = matrix.at(r, col) / pivot;
-            if (isNearlyZero(factor)) {
-                continue;
-            }
-
             for (int c = col; c < n; ++c) {
                 matrix.at(r, c) -= factor * matrix.at(col, c);
-                if (isNearlyZero(matrix.at(r, c))) {
-                    matrix.at(r, c) = 0.0;
-                }
             }
         }
     }
 
     return determinant * sign;
+}
+
+std::optional<Matrix> LinAlgService::inverse(const Matrix& matrix) {
+    if (matrix.rows() != matrix.cols()) {
+        throw DimensionError("inverse is defined only for square matrices");
+    }
+
+    const int n = matrix.rows();
+    Matrix augmented(n, 2 * n);
+
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c) {
+            augmented.at(r, c) = matrix.at(r, c);
+        }
+        for (int c = 0; c < n; ++c) {
+            augmented.at(r, n + c) = (r == c ? 1.0 : 0.0);
+        }
+    }
+
+    augmented = rref(std::move(augmented));
+
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c) {
+            const double expected = (r == c ? 1.0 : 0.0);
+            if (std::abs(augmented.at(r, c) - expected) > 1e-7) {
+                return std::nullopt;
+            }
+        }
+    }
+
+    Matrix inverseMatrix(n, n);
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c) {
+            inverseMatrix.at(r, c) = augmented.at(r, n + c);
+        }
+    }
+
+    return inverseMatrix;
 }
 
 } // namespace core
