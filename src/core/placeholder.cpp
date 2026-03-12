@@ -1,5 +1,6 @@
 #include "core/constants.h"
 #include "core/errors.h"
+#include "core/matrix.h"
 
 namespace core {
     void placeholder_core() {
