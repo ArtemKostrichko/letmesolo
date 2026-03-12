@@ -8,6 +8,8 @@ namespace core {
     public:
         Matrix(int rows, int cols);
 
+        static Matrix identity(int n);
+
         int rows() const;
         int cols() const;
 

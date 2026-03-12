@@ -12,12 +12,12 @@ else()
 endif()
 
 add_library(matrix_core STATIC
-        src/core/placeholder.cpp
+        src/core/matrix.cpp
 )
 target_include_directories(matrix_core PUBLIC src)
 
 add_library(matrix_io STATIC
-        src/io/placeholder.cpp
+        src/io/matrix_input.cpp
 )
 target_include_directories(matrix_io PUBLIC src)
 
@@ -26,8 +26,8 @@ add_library(matrix_util STATIC
 )
 target_include_directories(matrix_util PUBLIC src)
 
-add_library(matrix_io STATIC
-        src/io/matrix_input.cpp
+add_library(matrix_report STATIC
+        src/report/placeholder.cpp
 )
 target_include_directories(matrix_report PUBLIC src)
 
