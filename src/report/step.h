@@ -1,18 +1,13 @@
 #pragma once
 
-#include <string>
-
-#include "core/matrix.h"
-#include "util/value.h"
+#include "report/step.h"
 
 namespace report {
 
-    class Step {
+    class InfoStep : public Step {
     public:
-        virtual ~Step() = default;
-
-        virtual std::string name() const = 0;
-        virtual util::Value run(const core::Matrix& A) = 0;
+        std::string name() const override;
+        util::Value run(const core::Matrix& A) override;
     };
 
 } // namespace report
