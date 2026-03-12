@@ -26,8 +26,8 @@ add_library(matrix_util STATIC
 )
 target_include_directories(matrix_util PUBLIC src)
 
-add_library(matrix_report STATIC
-        src/report/placeholder.cpp
+add_library(matrix_io STATIC
+        src/io/matrix_input.cpp
 )
 target_include_directories(matrix_report PUBLIC src)
 
