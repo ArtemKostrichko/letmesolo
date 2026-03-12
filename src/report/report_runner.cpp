@@ -1,11 +1,12 @@
 #include "report/report_runner.h"
 
-#include "io/matrix_print.h"
 #include "util/value_printer.h"
 
 #include <chrono>
 #include <memory>
 #include <ostream>
+#include <string>
+#include <utility>
 
 namespace report {
     namespace {
@@ -17,7 +18,8 @@ namespace report {
 
             ~ScopedStepTimer() {
                 const auto finish = std::chrono::steady_clock::now();
-                const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(finish - start_).count();
+                const auto elapsed =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(finish - start_).count();
                 out_ << "(" << stepName_ << " took " << elapsed << " ms)\n";
             }
 
@@ -34,13 +36,15 @@ namespace report {
         const std::vector<std::unique_ptr<Step>>& steps,
         std::ostream& out,
         std::shared_ptr<const io::MatrixPrinter> printer) {
-        // shared_ptr is justified here because one formatter is reused
-        // by several parts of the program: app, report layer and tests.
-        // unique_ptr is not suitable because it models exclusive ownership.
+        // One formatter object is reused in several places:
+        // app, report layer and tests.
+        // shared_ptr fits this shared ownership model better than unique_ptr.
         for (const auto& step : steps) {
             out << "=== " << step->name() << " ===\n";
+
             ScopedStepTimer timer(out, step->name());
             const util::Value value = step->run(matrix);
+
             util::printValue(out, value, printer);
             out << '\n';
         }
