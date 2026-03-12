@@ -1,24 +1,39 @@
+#include "core/errors.h"
+#include "io/matrix_input.h"
+#include "io/matrix_print.h"
+#include "report/info_step.h"
+#include "report/property_step.h"
+#include "report/report_runner.h"
+#include "report/transform_step.h"
+
 #include <exception>
 #include <iostream>
-
-#include "core/errors.h"
+#include <memory>
+#include <vector>
 
 int main() {
     try {
-        std::cout << "matrix_app started\n";
+        const core::Matrix matrix = io::MatrixInput{}.read(std::cin);
+
+        const auto printer = std::make_shared<const io::MatrixPrinter>();
+
+        std::cout << "=== Input matrix ===\n";
+        printer->print(std::cout, matrix);
+        std::cout << '\n';
+
+        std::vector<std::unique_ptr<report::Step>> steps;
+        steps.push_back(std::make_unique<report::InfoStep>());
+        steps.push_back(std::make_unique<report::TransformStep>());
+        steps.push_back(std::make_unique<report::PropertyStep>());
+
+        report::runReport(matrix, steps, std::cout, printer);
         return 0;
-    } catch (const core::ParseError& e) {
-        std::cerr << "Parse error: " << e.what() << '\n';
-    } catch (const core::DimensionError& e) {
-        std::cerr << "Dimension error: " << e.what() << '\n';
-    } catch (const core::SingularError& e) {
-        std::cerr << "Singular error: " << e.what() << '\n';
-    } catch (const core::EvalError& e) {
-        std::cerr << "Evaluation error: " << e.what() << '\n';
-    } catch (const std::exception& e) {
-        std::cerr << "Unhandled error: " << e.what() << '\n';
-    } catch (...) {
-        std::cerr << "Unknown error\n";
+    } catch (const core::ParseError& error) {
+        std::cerr << "Parse error: " << error.what() << '\n';
+    } catch (const core::DimensionError& error) {
+        std::cerr << "Dimension error: " << error.what() << '\n';
+    } catch (const std::exception& error) {
+        std::cerr << "Error: " << error.what() << '\n';
     }
 
     return 1;
