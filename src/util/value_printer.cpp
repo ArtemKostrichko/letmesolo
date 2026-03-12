@@ -3,24 +3,23 @@
 #include <ostream>
 #include <variant>
 
-#include "io/matrix_print.h"
-
 namespace util {
 
-    void printValue(std::ostream& out, const Value& value) {
+    void printValue(
+        std::ostream& out,
+        const Value& value,
+        std::shared_ptr<const io::MatrixPrinter> printer) {
         std::visit(
-            [&out](const auto& v) {
-                using T = std::decay_t<decltype(v)>;
+            [&out, &printer](const auto& current) {
+                using T = std::decay_t<decltype(current)>;
 
                 if constexpr (std::is_same_v<T, core::Matrix>) {
-                    io::MatrixPrinter printer;
-                    printer.print(out, v);
+                    printer->print(out, current);
                 } else {
-                    out << v << '\n';
+                    out << current << '\n';
                 }
             },
-            value
-        );
+            value);
     }
 
 } // namespace util
