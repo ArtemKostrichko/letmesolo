@@ -32,6 +32,7 @@ add_library(matrix_report STATIC
         src/report/placeholder.cpp
         src/report/info_step.cpp
         src/report/step_runner.cpp
+        src/report/transform_step.cpp
 )
 target_include_directories(matrix_report PUBLIC src)
 
