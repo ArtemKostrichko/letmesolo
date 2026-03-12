@@ -16,6 +16,9 @@ namespace core {
         double& at(int r, int c);
         double at(int r, int c) const;
 
+        Matrix transpose() const;
+        Matrix operator*(double scalar) const;
+
     private:
         int rows_;
         int cols_;

@@ -57,4 +57,24 @@ namespace core {
         return data_[static_cast<std::size_t>(indexOf(cols_, r, c))];
     }
 
+    Matrix Matrix::transpose() const {
+        Matrix result(cols_, rows_);
+        for (int r = 0; r < rows_; ++r) {
+            for (int c = 0; c < cols_; ++c) {
+                result.at(c, r) = at(r, c);
+            }
+        }
+        return result;
+    }
+
+    Matrix Matrix::operator*(double scalar) const {
+        Matrix result(rows_, cols_);
+        for (int r = 0; r < rows_; ++r) {
+            for (int c = 0; c < cols_; ++c) {
+                result.at(r, c) = at(r, c) * scalar;
+            }
+        }
+        return result;
+    }
+
 } // namespace core
